@@ -1,1 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add a New Question</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.question.label }}<br>
+            {{ form.question(rows=5, cols=40) }}
+        </div>
+        <div>
+            {{ form.answer.label }}<br>
+            {{ form.answer(rows=5, cols=40) }}
+        </div>
+        <div>
+            {{ form.image_file.label }}<br>
+            {{ form.image_file() }}
+        </div>
+        <div>
+            {{ form.category.label }}<br>
+            {{ form.category() }}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+{% endblock %}
 
