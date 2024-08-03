@@ -1,28 +1,43 @@
-{% extends 'base.html' %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a New Question</title>
+</head>
+<body>
     <h1>Add a New Question</h1>
     <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        <div>
+        <p>
             {{ form.question.label }}<br>
-            {{ form.question(rows=5, cols=40) }}
-        </div>
-        <div>
+            {{ form.question(size=60, rows=10) }}
+        </p>
+        <p>
             {{ form.answer.label }}<br>
-            {{ form.answer(rows=5, cols=40) }}
-        </div>
-        <div>
+            {{ form.answer(size=60, rows=3) }}
+        </p>
+        <p>
             {{ form.image_file.label }}<br>
             {{ form.image_file() }}
-        </div>
-        <div>
+        </p>
+        <p>
             {{ form.category.label }}<br>
             {{ form.category() }}
-        </div>
-        <div>
-            {{ form.submit() }}
-        </div>
+        </p>
+        <p>{{ form.submit() }}</p>
     </form>
-{% endblock %}
-
+    <h2>Question List</h2>
+    <ul>
+        {% for question in questions %}
+            <li>
+                {{ question.question }}<br>
+                <strong>Answer:</strong> {{ question.answer }}<br>
+                {% if question.image_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + question.image_path) }}" alt="Image" width="100">
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
