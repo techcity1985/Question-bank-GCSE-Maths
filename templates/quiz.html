@@ -1,1 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ quiz.name }}</h1>
+    <form method="POST">
+        {% for question in quiz.questions %}
+            <div>
+                <label>{{ question.question }}</label><br>
+                <textarea name="question_{{ question.id }}" rows="2" cols="40"></textarea>
+            </div>
+        {% endfor %}
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+{% endblock %}
 
