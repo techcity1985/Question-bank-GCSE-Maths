@@ -1,6 +1,12 @@
-echo "Flask==2.0.2" > requirements.txt
-echo "Flask-SQLAlchemy==2.5.1" >> requirements.txt
-echo "Werkzeug==2.0.2" >> requirements.txt
-echo "Flask-WTF==0.15.1" >> requirements.txt
-echo "WTForms==2.3.3" >> requirements.txt
-echo "email-validator==1.1.3" >> requirements.txt
+blinker==1.8.2
+click==8.1.7
+colorama==0.4.6
+Flask==3.0.3
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+Werkzeug==3.0.3
+Flask-SQLAlchemy==2.5.1
+Flask-WTF==0.15.1
+WTForms==2.3.3
+email-validator==1.1.3
