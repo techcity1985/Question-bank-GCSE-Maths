@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Result</title>
+    <title>Question Detail</title>
 </head>
 <body>
-    <h1>{{ msg }}</h1>
-    <a href="/">Go Back</a>
+    <h1>Question Detail</h1>
+    <p><strong>Question:</strong> {{ row['question'] }}</p>
+    <p><strong>Answer:</strong> {{ row['answer'] }}</p>
+    {% if row['image'] %}
+        <p><strong>Image:</strong></p>
+        <img src="data:image/png;base64,{{ row['image']|b64encode }}" alt="Question Image">
+    {% endif %}
+    <br>
+    <a href="/list_questions">Back to List</a>
 </body>
 </html>
