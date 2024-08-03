@@ -1,16 +1,32 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField, SelectField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-from flask_wtf.file import FileAllowed
-from models import Category
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from models import User
 
-class QuestionForm(FlaskForm):
-    question = TextAreaField('Question', validators=[DataRequired(), Length(min=10)])
-    answer = TextAreaField('Answer', validators=[DataRequired(), Length(min=1)])
-    image_file = FileField('Image File', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
-    category = SelectField('Category', coerce=int)
-    submit = SubmitField('Submit')
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Sign Up')
 
-    def __init__(self, *args, **kwargs):
-        super(QuestionForm, self).__init__(*args, **kwargs)
-        self.category.choices = [(category.id, category.name) for category in Category.query.all()]
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('That email is taken. Please choose a different one.')
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')
+
+class AddQuestionForm(FlaskForm):
+    question = StringField('Question', validators=[DataRequired()])
+    image = FileField('Image', validators=[DataRequired()])
+    submit = SubmitField('Add Question')
