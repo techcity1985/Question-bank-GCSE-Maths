@@ -1,17 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Question Detail</title>
-</head>
-<body>
-    <h1>Question Detail</h1>
-    <p><strong>Question:</strong> {{ row['question'] }}</p>
-    <p><strong>Answer:</strong> {{ row['answer'] }}</p>
-    {% if row['image'] %}
-        <p><strong>Image:</strong></p>
-        <img src="data:image/png;base64,{{ row['image']|b64encode }}" alt="Question Image">
-    {% endif %}
-    <br>
-    <a href="/list_questions">Back to List</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Quiz Result</h1>
+    <p>Your score: {{ score }}%</p>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+{% endblock %}
