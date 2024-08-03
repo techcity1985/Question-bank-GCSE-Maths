@@ -37,7 +37,8 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    questions = Question.query.all()
+    return render_template('index.html', questions=questions)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
