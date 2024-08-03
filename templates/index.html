@@ -1,38 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Upload Question</title>
-</head>
-<body>
-    <h1>Add a New Question</h1>
-    <form action="{{ url_for('add_question_route') }}" method="post" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.question.label }}<br>
-            {{ form.question(rows=3, cols=40) }}
-        </p>
-        <p>
-            {{ form.answer.label }}<br>
-            {{ form.answer(rows=3, cols=40) }}
-        </p>
-        <p>
-            {{ form.image.label }}<br>
-            {{ form.image() }}
-        </p>
-        <p><input type="submit" value="Submit"></p>
-    </form>
-    
-    <h2>Question List</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Question Bank</h1>
     <ul>
-    {% for row in rows %}
-        <li>
-            <strong>Question:</strong> {{ row[1] }}<br>
-            <strong>Answer:</strong> {{ row[2] }}<br>
-            {% if row[3] %}
-            <img src="{{ url_for('static', filename='uploads/' ~ row[3].split('/')[-1]) }}" alt="Image for {{ row[1] }}" width="200">
-            {% endif %}
-        </li>
-    {% endfor %}
+        {% for category in categories %}
+            <li><a href="{{ url_for('category', category_id=category.id) }}">{{ category.name }}</a></li>
+        {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}
