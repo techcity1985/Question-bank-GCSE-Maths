@@ -1,23 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
+from models import init_db, add_question, get_all_questions, get_question
+import os
 
 app = Flask(__name__)
-
-# Database setup
-def init_db():
-    conn = sqlite3.connect('questions.db')
-    print("Opened database successfully")
-
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            question TEXT,
-            answer TEXT,
-            image BLOB
-        )
-    ''')
-    print("Table created successfully")
-    conn.close()
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # Initialize the database
 init_db()
@@ -27,38 +13,28 @@ def home():
     return render_template('index.html')
 
 @app.route('/add_question', methods=['POST'])
-def add_question():
+def add_question_route():
     question = request.form['question']
     answer = request.form['answer']
-    image = request.files['image'].read() if 'image' in request.files else None
+    image = request.files['image']
 
-    with sqlite3.connect('questions.db') as con:
-        cur = con.cursor()
-        cur.execute("INSERT INTO questions (question, answer, image) VALUES (?, ?, ?)", (question, answer, image))
-        con.commit()
-        msg = "Question added successfully"
+    image_path = None
+    if image:
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+        image.save(image_path)
+
+    add_question(question, answer, image_path)
+    msg = "Question added successfully"
     return render_template('index.html', msg=msg)
 
 @app.route('/list_questions')
 def list_questions():
-    con = sqlite3.connect('questions.db')
-    con.row_factory = sqlite3.Row
-
-    cur = con.cursor()
-    cur.execute("SELECT * FROM questions")
-
-    rows = cur.fetchall()
+    rows = get_all_questions()
     return render_template('list.html', rows=rows)
 
 @app.route('/view_question/<int:question_id>')
-def view_question(question_id):
-    con = sqlite3.connect('questions.db')
-    con.row_factory = sqlite3.Row
-
-    cur = con.cursor()
-    cur.execute("SELECT * FROM questions WHERE id = ?", (question_id,))
-    row = cur.fetchone()
-
+def view_question_route(question_id):
+    row = get_question(question_id)
     return render_template('result.html', row=row)
 
 if __name__ == '__main__':
