@@ -76,7 +76,8 @@ def add_question():
         db.session.commit()
         flash('Question added successfully.', 'success')
         return redirect(url_for('index'))
-    return render_template('add_question.html', form=form)
+    questions = Question.query.all()
+    return render_template('add_question.html', form=form, questions=questions)
 
 @app.route('/category/<int:category_id>')
 @login_required
