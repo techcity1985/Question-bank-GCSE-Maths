@@ -1,87 +1,36 @@
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
-def create_db():
-    conn = sqlite3.connect('gcse_maths_question_bank.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS questions (
-                 id INTEGER PRIMARY KEY,
-                 question TEXT,
-                 answer TEXT,
-                 topic TEXT,
-                 difficulty TEXT,
-                 question_type TEXT)''')
-    conn.commit()
-    conn.close()
+app = Flask(__name__)
 
-def add_question(question, answer, topic, difficulty, question_type):
-    conn = sqlite3.connect('gcse_maths_question_bank.db')
-    c = conn.cursor()
-    c.execute("INSERT INTO questions (question, answer, topic, difficulty, question_type) VALUES (?, ?, ?, ?, ?)", 
-              (question, answer, topic, difficulty, question_type))
-    conn.commit()
-    conn.close()
+def init_db():
+    with sqlite3.connect('questions.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS questions (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            question TEXT NOT NULL,
+                            answer TEXT NOT NULL
+                          )''')
+        conn.commit()
 
-def get_questions_by_topic(topic):
-    conn = sqlite3.connect('gcse_maths_question_bank.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM questions WHERE topic=?", (topic,))
-    questions = c.fetchall()
-    conn.close()
-    return questions
+@app.route('/')
+def index():
+    with sqlite3.connect('questions.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT question, answer FROM questions')
+        questions = cursor.fetchall()
+    return render_template('index.html', questions=questions)
 
-def get_questions_by_difficulty(difficulty):
-    conn = sqlite3.connect('gcse_maths_question_bank.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM questions WHERE difficulty=?", (difficulty,))
-    questions = c.fetchall()
-    conn.close()
-    return questions
+@app.route('/add', methods=['POST'])
+def add_question():
+    question = request.form['question']
+    answer = request.form['answer']
+    with sqlite3.connect('questions.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO questions (question, answer) VALUES (?, ?)', (question, answer))
+        conn.commit()
+    return redirect(url_for('index'))
 
-def get_all_questions():
-    conn = sqlite3.connect('gcse_maths_question_bank.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM questions")
-    questions = c.fetchall()
-    conn.close()
-    return questions
-
-def main():
-    create_db()
-    while True:
-        print("1. Add a question")
-        print("2. Retrieve questions by topic")
-        print("3. Retrieve questions by difficulty")
-        print("4. Retrieve all questions")
-        print("5. Exit")
-
-        choice = input("Enter your choice: ")
-
-        if choice == '1':
-            question = input("Enter the question: ")
-            answer = input("Enter the answer: ")
-            topic = input("Enter the topic: ")
-            difficulty = input("Enter the difficulty (Easy/Medium/Hard): ")
-            question_type = input("Enter the question type (Multiple Choice/Short Answer/Long Answer): ")
-            add_question(question, answer, topic, difficulty, question_type)
-            print("Question added successfully!")
-        elif choice == '2':
-            topic = input("Enter the topic: ")
-            questions = get_questions_by_topic(topic)
-            for q in questions:
-                print(q)
-        elif choice == '3':
-            difficulty = input("Enter the difficulty (Easy/Medium/Hard): ")
-            questions = get_questions_by_difficulty(difficulty)
-            for q in questions:
-                print(q)
-        elif choice == '4':
-            questions = get_all_questions()
-            for q in questions:
-                print(q)
-        elif choice == '5':
-            break
-        else:
-            print("Invalid choice. Please try again.")
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    init_db()
+    app.run(debug=True)
