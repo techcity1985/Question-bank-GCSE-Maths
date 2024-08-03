@@ -3,49 +3,44 @@ import sqlite3
 
 app = Flask(__name__)
 
-def init_sqlite_db():
-    conn = sqlite3.connect('database.db')
+# Database setup
+def init_db():
+    conn = sqlite3.connect('questions.db')
     print("Opened database successfully")
 
-    conn.execute('''
-    CREATE TABLE IF NOT EXISTS questions (
-        id INTEGER PRIMARY KEY,
-        question TEXT,
-        answer TEXT,
-        image TEXT
-    )''')
+    conn.execute('CREATE TABLE IF NOT EXISTS questions (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT, answer TEXT)')
     print("Table created successfully")
     conn.close()
 
+# Initialize the database
+init_db()
+
 @app.route('/')
 def home():
-    conn = sqlite3.connect('database.db')
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM questions")
-    questions = cur.fetchall()
-    conn.close()
-    return render_template('index.html', questions=questions)
+    return render_template('index.html')
 
-@app.route('/add-question/', methods=['POST'])
+@app.route('/add_question', methods=['POST'])
 def add_question():
-    if request.method == 'POST':
-        try:
-            question = request.form['question']
-            answer = request.form['answer']
-            image = request.form['image']  # Path to the image file
+    question = request.form['question']
+    answer = request.form['answer']
 
-            with sqlite3.connect('database.db') as conn:
-                cur = conn.cursor()
-                cur.execute("INSERT INTO questions (question, answer, image) VALUES (?, ?, ?)", (question, answer, image))
-                conn.commit()
-                msg = "Record successfully added"
-        except Exception as e:
-            conn.rollback()
-            msg = "Error in insert operation: " + str(e)
-        finally:
-            return render_template('result.html', msg=msg)
-            conn.close()
+    with sqlite3.connect('questions.db') as con:
+        cur = con.cursor()
+        cur.execute("INSERT INTO questions (question, answer) VALUES (?, ?)", (question, answer))
+        con.commit()
+        msg = "Question added successfully"
+    return render_template('index.html', msg=msg)
 
-if __name__ == "__main__":
-    init_sqlite_db()
-    app.run(debug=True)
+@app.route('/list_questions')
+def list_questions():
+    con = sqlite3.connect('questions.db')
+    con.row_factory = sqlite3.Row
+
+    cur = con.cursor()
+    cur.execute("SELECT * FROM questions")
+
+    rows = cur.fetchall()
+    return render_template('list.html', rows=rows)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5001)
