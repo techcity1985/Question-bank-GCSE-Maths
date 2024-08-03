@@ -1,26 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Question Bank</title>
+    <title>Upload Question</title>
 </head>
 <body>
-    <h1>Welcome to the Question Bank</h1>
-    <form method="POST" action="/add_question" enctype="multipart/form-data">
-        <label for="question">Question:</label>
-        <input type="text" id="question" name="question" required>
-        <br>
-        <label for="answer">Answer:</label>
-        <input type="text" id="answer" name="answer" required>
-        <br>
-        <label for="image">Image:</label>
-        <input type="file" id="image" name="image">
-        <br>
-        <input type="submit" value="Add Question">
+    <h1>Upload a New Question</h1>
+    <form action="{{ url_for('add_question_route') }}" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.question.label }}<br>
+            {{ form.question(size=80) }}
+        </p>
+        <p>
+            {{ form.answer.label }}<br>
+            {{ form.answer(size=80) }}
+        </p>
+        <p>
+            {{ form.image.label }}<br>
+            {{ form.image() }}
+        </p>
+        <p><input type="submit" value="Add Question"></p>
     </form>
-    {% if msg %}
-        <p>{{ msg }}</p>
-    {% endif %}
-    <br>
-    <a href="/list_questions">View All Questions</a>
+    <a href="{{ url_for('list_questions') }}">View All Questions</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>
