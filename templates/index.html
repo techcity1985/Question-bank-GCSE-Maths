@@ -4,27 +4,20 @@
     <title>Question Bank</title>
 </head>
 <body>
-    <h1>Add a New Question</h1>
-    <form method="POST" action="/add-question/">
-        <label for="question">Question:</label><br>
-        <textarea name="question" rows="4" cols="50"></textarea><br><br>
-        <label for="answer">Answer:</label><br>
-        <textarea name="answer" rows="4" cols="50"></textarea><br><br>
-        <label for="image">Image File Path:</label><br>
-        <input type="text" name="image"><br><br>
-        <input type="submit" value="Submit">
+    <h1>Welcome to the Question Bank</h1>
+    <form method="POST" action="/add_question">
+        <label for="question">Question:</label>
+        <input type="text" id="question" name="question" required>
+        <br>
+        <label for="answer">Answer:</label>
+        <input type="text" id="answer" name="answer" required>
+        <br>
+        <input type="submit" value="Add Question">
     </form>
-    <h2>Question List</h2>
-    <ul>
-        {% for question in questions %}
-        <li>
-            <p>{{ question.question }}</p>
-            <p>Answer: {{ question.answer }}</p>
-            {% if question.image %}
-            <img src="{{ url_for('static', filename='images/' ~ question.image) }}" alt="Question Image">
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+    {% if msg %}
+        <p>{{ msg }}</p>
+    {% endif %}
+    <br>
+    <a href="/list_questions">View All Questions</a>
 </body>
 </html>
