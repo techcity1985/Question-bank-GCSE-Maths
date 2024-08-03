@@ -1,1 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ category.name }}</h1>
+    <ul>
+        {% for question in questions %}
+            <li>
+                <p>{{ question.question }}</p>
+                <p><strong>Answer:</strong> {{ question.answer }}</p>
+                {% if question.image_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + question.image_path) }}" alt="Question Image">
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
 
