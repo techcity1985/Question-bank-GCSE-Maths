@@ -1,17 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Bank</title>
-</head>
-<body>
-    <h1>Question Bank</h1>
-    <ul>
-        {% for category in categories %}
-            <li><a href="{{ url_for('category', category_id=category.id) }}">{{ category.name }}</a></li>
-        {% endfor %}
-    </ul>
-    <p><a href="{{ url_for('add_question') }}">Add New Question</a></p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Welcome to the Question Bank</h1>
+    <div>
+        {% if questions %}
+            <ul>
+                {% for question in questions %}
+                    <li>
+                        {{ question.question }}
+                        {% if question.image_file %}
+                            <br>
+                            <img src="{{ url_for('static', filename='uploads/' + question.image_file) }}" alt="Question Image" width="300">
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No questions available.</p>
+        {% endif %}
+    </div>
+{% endblock %}
