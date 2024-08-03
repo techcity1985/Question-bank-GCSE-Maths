@@ -7,13 +7,24 @@ def init_sqlite_db():
     conn = sqlite3.connect('database.db')
     print("Opened database successfully")
 
-    conn.execute('CREATE TABLE IF NOT EXISTS questions (id INTEGER PRIMARY KEY, question TEXT, answer TEXT)')
+    conn.execute('''
+    CREATE TABLE IF NOT EXISTS questions (
+        id INTEGER PRIMARY KEY,
+        question TEXT,
+        answer TEXT,
+        image TEXT
+    )''')
     print("Table created successfully")
     conn.close()
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM questions")
+    questions = cur.fetchall()
+    conn.close()
+    return render_template('index.html', questions=questions)
 
 @app.route('/add-question/', methods=['POST'])
 def add_question():
@@ -21,10 +32,11 @@ def add_question():
         try:
             question = request.form['question']
             answer = request.form['answer']
+            image = request.form['image']  # Path to the image file
 
             with sqlite3.connect('database.db') as conn:
                 cur = conn.cursor()
-                cur.execute("INSERT INTO questions (question, answer) VALUES (?, ?)", (question, answer))
+                cur.execute("INSERT INTO questions (question, answer, image) VALUES (?, ?, ?)", (question, answer, image))
                 conn.commit()
                 msg = "Record successfully added"
         except Exception as e:
