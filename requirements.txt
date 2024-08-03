@@ -1,8 +1,6 @@
-Flask==2.1.2
-Jinja2==3.0.1
-pandas==1.3.0
-sqlite3
-Flask
-Flask-SQLAlchemy
-Flask-WTF
-Werkzeug
+echo "Flask==2.0.2
+Flask-SQLAlchemy==2.5.1
+Werkzeug==2.0.2
+Flask-WTF==0.15.1
+WTForms==2.3.3
+email-validator==1.1.3" > requirements.txt
